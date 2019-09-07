@@ -1,0 +1,1 @@
+export { WINDOW_HEIGHT, WINDOW_WIDTH } from './constatnts';
