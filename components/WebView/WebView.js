@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { StyleSheet, WebView, ScrollView, RefreshControl } from 'react-native';
+import { StyleSheet, WebView, ScrollView, RefreshControl, Platform } from 'react-native';
 import { ScreenOrientation } from 'expo';
 import { WINDOW_WIDTH, WINDOW_HEIGHT } from '../../utils'
 
@@ -8,6 +8,7 @@ import { useIsConnected } from '../../hooks';
 
 const WebViewComponent = ({ navigation }) => {
   const isConnected  = useIsConnected(true);
+  const [orientation, setOrientation]  = useState('PORTRAIT');
   const [isRefreshing, setIsRefreshing] = useState(false);
   const webViewRef = useRef(null);
 
@@ -17,7 +18,8 @@ const WebViewComponent = ({ navigation }) => {
     }
   }, [isConnected, navigation]);
 
-  function orientationListener () {
+  function orientationListener ({ orientationInfo }) {
+    setOrientation(orientationInfo.orientation)
     webViewRef.current.reload();
   }
   function onRefresh () {
@@ -42,8 +44,11 @@ const WebViewComponent = ({ navigation }) => {
     >
       <WebView
         ref={webViewRef}
-        source={{uri: config.url}}
-        style={styles.web}
+        source={{uri: `${config.url}${Platform.OS === 'ios' ? '?ios=true' : ''}`}}
+        style={[
+          orientation === 'PORTRAIT_UP' ?  styles.web : styles.landscapeWeb
+          //styles.web,
+        ]}
       />
     </ScrollView>
   );
@@ -56,6 +61,12 @@ const styles = StyleSheet.create({
   web: {
     width: WINDOW_WIDTH,
     height: WINDOW_HEIGHT,
+    borderColor: 'black',
+    borderWidth: 2
+  },
+  landscapeWeb: {
+    width: WINDOW_HEIGHT,
+    height: WINDOW_WIDTH,
   }
 });
 
