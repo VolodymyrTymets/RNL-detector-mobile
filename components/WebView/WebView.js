@@ -6,6 +6,9 @@ import { WINDOW_WIDTH, WINDOW_HEIGHT } from '../../utils'
 import { config } from "../../config/config";
 import { useIsConnected } from '../../hooks';
 
+const isPortrait = (orientation) => orientation.indexOf('PORTRAIT') !== -1;
+const getWebViewUrl = (height, width) => `${config.url}${Platform.OS === 'ios' ? '/ios' : ''}?height=${height}&width=${width}`;
+
 const WebViewComponent = ({ navigation }) => {
   const isConnected  = useIsConnected(true);
   const [orientation, setOrientation]  = useState('PORTRAIT');
@@ -20,7 +23,6 @@ const WebViewComponent = ({ navigation }) => {
 
   function orientationListener ({ orientationInfo }) {
     setOrientation(orientationInfo.orientation)
-    webViewRef.current.reload();
   }
   function onRefresh () {
     webViewRef.current.reload();
@@ -44,11 +46,10 @@ const WebViewComponent = ({ navigation }) => {
     >
       <WebView
         ref={webViewRef}
-        source={{uri: `${config.url}${Platform.OS === 'ios' ? '?ios=true' : ''}`}}
-        style={[
-          orientation === 'PORTRAIT_UP' ?  styles.web : styles.landscapeWeb
-          //styles.web,
-        ]}
+        source={{
+          uri: isPortrait(orientation) ? getWebViewUrl(WINDOW_HEIGHT, WINDOW_WIDTH) : getWebViewUrl(WINDOW_WIDTH, WINDOW_HEIGHT)
+        }}
+        style={[isPortrait(orientation) ?  styles.web : styles.landscapeWeb]}
       />
     </ScrollView>
   );
@@ -61,8 +62,6 @@ const styles = StyleSheet.create({
   web: {
     width: WINDOW_WIDTH,
     height: WINDOW_HEIGHT,
-    borderColor: 'black',
-    borderWidth: 2
   },
   landscapeWeb: {
     width: WINDOW_HEIGHT,
