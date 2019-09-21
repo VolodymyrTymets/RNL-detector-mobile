@@ -14,7 +14,7 @@ function timeout(ms, promise) {
   })
 }
 
-const useIsConnected = (initialValue = false) => {
+const useIsConnected = (initialValue = false, intervalTime = config.interval) => {
   const [isConnected, setIsConnected] = useState(initialValue);
   useEffect(() => {
     const interval = setInterval(() => {
@@ -22,7 +22,7 @@ const useIsConnected = (initialValue = false) => {
         .then((response) => setIsConnected(true))
         .catch(() => setIsConnected(false));
 
-    }, config.interval);
+    }, intervalTime);
     return () => clearInterval(interval);
   }, []);
 

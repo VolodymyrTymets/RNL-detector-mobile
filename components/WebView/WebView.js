@@ -10,7 +10,7 @@ const isPortrait = (orientation) => orientation.indexOf('PORTRAIT') !== -1;
 const getWebViewUrl = (height, width) => `${config.url}${Platform.OS === 'ios' ? '/ios' : ''}?height=${height}&width=${width}`;
 
 const WebViewComponent = ({ navigation }) => {
-  const isConnected  = useIsConnected(true);
+  const isConnected  = useIsConnected(true, 9000);
   const [orientation, setOrientation]  = useState('PORTRAIT');
   const [isRefreshing, setIsRefreshing] = useState(false);
   const webViewRef = useRef(null);
